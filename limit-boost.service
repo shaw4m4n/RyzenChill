@@ -1,0 +1,8 @@
+[Unit]
+Description=Limit CPU boost based on cpu temps
+
+[Service]
+ExecStart=/usr/local/bin/limit-boost
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+while true; do
+	sleep 0.5
+        temp=$(sensors | awk '/^Tctl:/ {print $2}' | tr -cd '[:digit:].' | cut -d'.' -f1)
+        if [[ $temp -gt 75 ]]
+                then
+                        echo 0 | tee /sys/devices/system/cpu/cpufreq/boost &> /dev/null
+                        sleep 10
+                else
+                        echo 1 | tee /sys/devices/system/cpu/cpufreq/boost &> /dev/null
+        fi
+done
+
