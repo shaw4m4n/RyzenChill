@@ -1,22 +1,44 @@
-# Fixing Overheating Programmatically
+# RyzenChill ❄️
 
-## Issue
-Personal Laptop (Asus TUF A15 2020) with Linux is touching 96 degrees which was too warm for comfortable usage and it significantly impacted the battery and overall performance of the device.
+A lightweight bash daemon to keep your AMD Ryzen laptop cool by dynamically managing CPU boost.
 
-##  Solutions:
-- Cleaning the internal fans and changing thermal paste.
-    - It reduces overheating but during heavy workload it still heated and and drained charge significantly.
+## The Problem
+Running Linux on laptops (like the Asus TUF A15) can sometimes lead to aggressive CPU boosting, resulting in high temperatures (90°C+) and battery drain.
 
-- After some research I found out that Linux CPU boost feature is always on and not properly optimized for the device.
-- I found Linux (Ubuntu) use's a file to enable/disable cpu boost 
-    - In my case it was: `/sys/devices/system/cpu/cpufreq/boost`
+## The Solution
+**RyzenChill** (`rchill`) monitors your CPU temperature using `lm-sensors`. If the temperature exceeds a set threshold (default: 75°C), it temporarily disables CPU boost to let the system cool down, re-enabling it once safe.
 
-- I wrote a shell script to control the boost parameter based on the cpu temps. `limit-boost`
-    - make sure the file is executable and store it in `/usr/local/bin/limit-boost`
-    - this program uses lm-sensors for cpu temperature infomation 
-        - search for the package for your distribution and install it before using.
+## Prerequisites
+- Linux OS
+- `lm-sensors` (must be installed and configured)
+- Root/Sudo access
 
-- and to deploy the script as a service used systemd service `limit-boost.service`
-    - this file need to be stored in `/etc/systemd/system/limit-boost.service`.
+## Installation
 
-- to enable the service `sudo systemctl enable limit-boost.service`.
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/shaw4m4n/Fixing-Overheating-Programmatically.git
+   mv Fixing-Overheating-Programmatically RyzenChill
+   cd RyzenChill
+   ```
+   *(Note: The repository URL is currently unchanged, but we are renaming the local folder to match the new project name)*
+
+2. **Install the script:**
+   ```bash
+   sudo cp rchill /usr/local/bin/
+   sudo chmod +x /usr/local/bin/rchill
+   ```
+
+3. **Install and start the service:**
+   ```bash
+   sudo cp rchill.service /etc/systemd/system/
+   sudo systemctl daemon-reload
+   sudo systemctl enable --now rchill.service
+   ```
+
+## Configuration
+To change the temperature limit (default 75°C), simply edit the script:
+```bash
+sudo nano /usr/local/bin/rchill
+```
+Change `75` in `if [[ $temp -gt 75 ]]` to your desired temperature.

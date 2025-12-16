@@ -1,0 +1,8 @@
+[Unit]
+Description=RyzenChill - Limit CPU boost based on cpu temps
+
+[Service]
+ExecStart=/usr/local/bin/rchill
+
+[Install]
+WantedBy=multi-user.target
